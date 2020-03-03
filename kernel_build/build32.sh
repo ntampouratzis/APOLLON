@@ -1,7 +1,7 @@
 cd linux-arm32-gem5
 
 echo Compile ARM KENEL ...
-make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- gem5_defconfig
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- vexpress_gem5_server_defconfig
 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- -j4
 
 cp vmlinux ../../kernels/binaries/vmlinux.aarch32.Apollon
