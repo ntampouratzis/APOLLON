@@ -1,0 +1,4 @@
+Reading simulation time from: /home/apollon/APOLLON/cgem5/McPat/mcpatOutput1.txt
+Reading simulation time from: /home/apollon/APOLLON/cgem5/node1/stats.txt
+leakage: 0.033739 W, dynamic: 0.001010 W and runtime: 51.999555 sec
+energy is 1806.912777 mJ

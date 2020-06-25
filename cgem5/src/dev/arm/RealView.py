@@ -280,12 +280,12 @@ class Pl050(AmbaIntDevice):
     int_delay = '1us'
     amba_id = 0x00141050
     
-class COSSIMSensorDevice(AmbaIntDevice):
-    type = 'COSSIMSensorDevice'
-    cxx_header = "dev/arm/COSSIMSensorDevice.hh"
+class ApollonDevice(AmbaDmaDevice):
+    type = 'ApollonDevice'
+    cxx_header = "dev/arm/ApollonDevice.hh"
     pio_size = Param.Addr(0xFFF, "Size of address range")
     nodeNum = Param.Int("Node Number")
-    int_delay = '1us'
+    #int_delay = '1us'
     amba_id = 0x00141051        
 
 class Pl111(AmbaDmaDevice):
@@ -729,8 +729,8 @@ class VExpress_EMM(RealView):
             devices.append(self.ide)
         if hasattr(self, "ethernet"):
             devices.append(self.ethernet)
-        if hasattr(self, "sensordev"):
-            devices.append(self.sensordev) 
+        if hasattr(self, "apollondev"):
+            devices.append(self.apollondev) 
         return devices
 
     # Attach any PCI devices that are supported
@@ -740,9 +740,9 @@ class VExpress_EMM(RealView):
         self.ide = IdeController(disks = [], pci_bus=0, pci_dev=1, pci_func=0,
                                  InterruptLine=2, InterruptPin=2)
         
-    # Attach the COSSIMSensorDevice
-    def attachSensorDevice(self, _nodeNumber):
-        self.sensordev = COSSIMSensorDevice(pio_addr=0x1c061000, int_num=54, nodeNum=_nodeNumber) #COSSIMSensorDevice        
+    # Attach the ApollonDevice
+    def attachApollonDevice(self, _nodeNumber):
+        self.apollondev = ApollonDevice(pio_addr=0x1c061000, int_num=54, nodeNum=_nodeNumber) #ApollonDevice        
 
     def enableMSIX(self):
         self.gic = Pl390(dist_addr=0x2C001000, cpu_addr=0x2C002000, it_lines=512)
@@ -934,12 +934,12 @@ Interrupts:
             self.pci_host,
             self.energy_ctrl,
             self.ethernet, #APOLLON
-            self.sensordev, #APOLLON
+            self.apollondev, #APOLLON
         ]
     
-    # Attach the COSSIMSensorDevice
-    def attachSensorDevice(self, _nodeNumber):
-        self.sensordev = COSSIMSensorDevice(pio_addr=0x1c061000, int_num=54, nodeNum=_nodeNumber) #COSSIMSensorDevice (APOLLON) 
+    # Attach the ApollonDevice
+    def attachApollonDevice(self, _nodeNumber):
+        self.apollondev = ApollonDevice(pio_addr=0x1c061000, int_num=54, nodeNum=_nodeNumber) #ApollonDevice (APOLLON) 
     
     def attachPciDevices(self):
         self.ethernet = IGbE_e1000(pci_bus=0, pci_dev=0, pci_func=0, #APOLLON

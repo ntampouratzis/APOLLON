@@ -13,7 +13,7 @@ obj-y     = fork.o exec_domain.o panic.o \
 	    async.o range.o groups.o smpboot.o
 
 # gem5 hooks for streamline support
-obj-y += m5struct.o SensorKernel_driver.o
+obj-y += m5struct.o ApollonKernel_driver.o
 
 
 

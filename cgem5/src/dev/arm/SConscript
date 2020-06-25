@@ -71,7 +71,7 @@ if env['TARGET_ISA'] == 'arm':
     Source('vgic.cc')
     Source('ufs_device.cc')
     Source('energy_ctrl.cc')
-    Source('COSSIMSensorDevice.cc')
+    Source('ApollonDevice.cc')
 
     DebugFlag('AMBA')
     DebugFlag('FlashDevice')
@@ -85,4 +85,4 @@ if env['TARGET_ISA'] == 'arm':
     DebugFlag('UFSHostDevice')
     DebugFlag('VGIC')
     DebugFlag('NoMali')
-    DebugFlag('COSSIMSensorDevice')
+    DebugFlag('ApollonDevice')

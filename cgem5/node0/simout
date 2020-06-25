@@ -1,0 +1,134 @@
+Redirecting stdout and stderr to /home/apollon/APOLLON/cgem5/node0/simout
+gem5 Simulator System.  http://gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 compiled Mar  3 2020 09:15:52
+gem5 started Mar 10 2020 05:58:43
+gem5 executing on ubuntu, pid 8368
+command line: /home/apollon/APOLLON/cgem5/build/X86/gem5.opt --listener-mode=on -r -d /home/apollon/APOLLON/cgem5/node0 /home/apollon/APOLLON/cgem5/configs/example/fs.py --kernel=x86_64-vmlinux-3.2.24-smp --disk-image=x86_64root.img --mem-size=2048MB --SynchTime=10ms --RxPacketTime=10ms --TotalNodes=4 --nodeNum=0 --script=/home/apollon/APOLLON/cgem5/configs/boot/COSSIM/script0.rcS --mcpat-xml=x86_AtomicSimpleCPU_template.xml --cossim
+
+Global frequency set at 1000000000000 ticks per second
+
+1. COSSIM_PROC_NET_NODE0
+HLA_GEM5 Note : FederationExecutionAlreadyExists Reason is : COSSIM_PROC_NET_NODE0. OK I can join it
+announceSynchronizationPoint
+
+2. GEM5_NODE0
+HLA_GEM5 Note : FederationExecutionAlreadyExists Reason is : GLOBAL_SYNCHRONIZATION. OK I can join it
+announceSynchronizationPoint
+warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+info: kernel located at: /home/apollon/APOLLON/kernels/binaries/x86_64-vmlinux-3.2.24-smp
+Listening for com_1 connection on port 3000
+      0: rtc: Real-time clock set to Sun Jan  1 00:00:00 2012
+0: testsys.remote_gdb.listener: listening for remote gdb #0 on port 7003
+warn: Reading current count from inactive timer.
+**** REAL SIMULATION ****
+info: Entering event queue @ 0.  Starting simulation...
+warn: Don't know what interrupt to clear for console.
+warn: instruction 'wbinvd' unimplemented
+4426740000: testsys.pc.com_1.terminal: attach terminal 0
+warn: Tried to clear PCI interrupt 14
+hack: Assuming logical destinations are 1 << id.
+warn: Unknown mouse command 0xe1.
+Exiting @ tick 30850451164000 because m5_exit instruction encountered
+Power results are calculated with xml file: x86_AtomicSimpleCPU_template.xml
+
+/home/apollon/APOLLON/cgem5/runMcPat.sh: 25: [: -eq: unexpected operator
+/home/apollon/APOLLON/cgem5/runMcPat.sh: 25: [: -eq: unexpected operator
+/home/apollon/APOLLON/cgem5/runMcPat.sh: 25: [: -eq: unexpected operator
+/home/apollon/APOLLON/cgem5/runMcPat.sh: 25: [: -eq: unexpected operator
+/home/apollon/APOLLON/cgem5/runMcPat.sh: 25: [: -eq: unexpected operator
+/home/apollon/APOLLON/cgem5/runMcPat.sh: 32: [: -eq: unexpected operator
+Reading GEM5 stats from: /home/apollon/APOLLON/cgem5/node0/stats.txt
+	Warning (stats): testsys.mem_ctrls.avgQLat is nan. Setting it to 0
+	Warning (stats): testsys.mem_ctrls.avgBusLat is nan. Setting it to 0
+	Warning (stats): testsys.mem_ctrls.avgMemAccLat is nan. Setting it to 0
+	Warning (stats): testsys.mem_ctrls.readRowHitRate is nan. Setting it to 0
+	Warning (stats): testsys.mem_ctrls.writeRowHitRate is nan. Setting it to 0
+	Warning (stats): testsys.mem_ctrls.avgGap is nan. Setting it to 0
+	Warning (stats): testsys.mem_ctrls.pageHitRate is nan. Setting it to 0
+Reading config from: /home/apollon/APOLLON/cgem5/node0/config.json
+Reading McPAT template from: /home/apollon/APOLLON/cgem5/McPat/mcpat/ProcessorDescriptionFiles/x86_AtomicSimpleCPU_template.xml
+***WARNING: testsys.cpu.itb.accesses does not exist in stats***
+	 Please use the right stats in your McPAT template file
+***WARNING: testsys.cpu.itb.misses does not exist in stats***
+	 Please use the right stats in your McPAT template file
+***WARNING: testsys.cpu.dtb.accesses does not exist in stats***
+	 Please use the right stats in your McPAT template file
+***WARNING: testsys.cpu.dtb.misses does not exist in stats***
+	 Please use the right stats in your McPAT template file
+Writing input to McPAT in: /home/apollon/APOLLON/cgem5/McPat/mcpatNode0.xml
+Cache size must >=64
+Cache size must >=64
+Cache size must >=64
+RTIA:: RTIA has thrown RTIA:: RTIA has thrown NetworkErrorNetworkError exception. exception.
+
+RTIA:: Reason: RTIA:: Reason: Connection closed by client.Connection closed by client.
+
+
+
+RTIA: Statistics (processed messages)
+RTIA: Statistics (processed messages)
+List of federate initiated services 
+List of federate initiated services 
+--------------------------------------------------
+--------------------------------------------------
+       1 Message::OPEN_CONNEXION (MSG#1)
+       1 Message::OPEN_CONNEXION (MSG#1)
+       1 Message::RESIGN_FEDERATION_EXECUTION (MSG#6)
+       1 Message::RESIGN_FEDERATION_EXECUTION (MSG#6)
+       1 Message::SYNCHRONIZATION_POINT_ACHIEVED (MSG#11)
+       1 Message::SYNCHRONIZATION_POINT_ACHIEVED (MSG#11)
+       1 Message::PUBLISH_INTERACTION_CLASS (MSG#31)
+       1 Message::PUBLISH_INTERACTION_CLASS (MSG#31)
+       1 Message::SUBSCRIBE_INTERACTION_CLASS (MSG#35)
+       1 Message::SUBSCRIBE_INTERACTION_CLASS (MSG#35)
+       1 Message::ENABLE_TIME_REGULATION (MSG#81)
+      10 Message::SEND_INTERACTION (MSG#45)
+       1 Message::DISABLE_TIME_REGULATION (MSG#82)
+    3095 Message::QUERY_FEDERATE_TIME (MSG#86)
+       1 Message::ENABLE_TIME_CONSTRAINED (MSG#83)
+    3095 Message::TIME_ADVANCE_REQUEST (MSG#92)
+       1 Message::DISABLE_TIME_CONSTRAINED (MSG#84)
+       2 Message::GET_INTERACTION_CLASS_HANDLE (MSG#117)
+    3086 Message::QUERY_FEDERATE_TIME (MSG#86)
+       4 Message::GET_PARAMETER_HANDLE (MSG#119)
+    3085 Message::TIME_ADVANCE_REQUEST (MSG#92)
+    3121 Message::TICK_REQUEST (MSG#142)
+       2 Message::GET_INTERACTION_CLASS_HANDLE (MSG#117)
+    3100 Message::TICK_REQUEST_NEXT (MSG#143)
+       4 Message::GET_PARAMETER_HANDLE (MSG#119)
+       1 Message::JOIN_FEDERATION_EXECUTION_V4 (MSG#149)
+    5151 Message::TICK_REQUEST (MSG#142)
+
+    3089 Message::TICK_REQUEST_NEXT (MSG#143)
+List of RTI initiated services 
+       1 Message::JOIN_FEDERATION_EXECUTION_V4 (MSG#149)
+--------------------------------------------------
+
+List of RTI initiated services 
+       1 NetworkMessage::Type::ANNOUNCE_SYNCHRONIZATION_POINT (MSG#14)
+--------------------------------------------------
+       1 NetworkMessage::Type::FEDERATION_SYNCHRONIZED (MSG#16)
+   11640 NetworkMessage::Type::MESSAGE_NULL (MSG#2)
+       3 NetworkMessage::Type::RECEIVE_INTERACTION (MSG#48)
+       3 NetworkMessage::Type::ADDITIONAL_FOM_MODULE (MSG#6)
+
+       7 NetworkMessage::Type::SET_TIME_REGULATING (MSG#8)
+ Number of Federate messages : 12433
+       1 NetworkMessage::Type::TIME_REGULATION_ENABLED (MSG#10)
+ Number of RTIG messages : 5
+       1 NetworkMessage::Type::TIME_CONSTRAINED_ENABLED (MSG#11)
+       1 NetworkMessage::Type::ANNOUNCE_SYNCHRONIZATION_POINT (MSG#14)
+       1 NetworkMessage::Type::FEDERATION_SYNCHRONIZED (MSG#16)
+
+ Number of Federate messages : 14427
+ Number of RTIG messages : 11654
+ TCP Socket  3 : total =     99148 Bytes sent 
+ TCP Socket  3 : total =    374928 Bytes received
+ TCP Socket  3 : total =      1681 Bytes sent 
+ TCP Socket  3 : total =      1640 Bytes received
+ UDP Socket  4 : total =         0 Bytes sent 
+ UDP Socket  4 : total =         0 Bytes received
+ UDP Socket  4 : total =         0 Bytes sent 
+ UDP Socket  4 : total =         0 Bytes received

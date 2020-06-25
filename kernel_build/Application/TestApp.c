@@ -1,44 +1,32 @@
-#include "SensorDriver.h"
+#include "ApollonDriver.h"
 
 
 
 int main(int argc, char *argv[])
 {
-  
-    uint8_t SensorNum, Precision;
-    float val;
     
-    InitDescr fd = SensorInitialization();
+    SensorInitialization();
     
     uint64_t loop_count = 10;
     uint64_t i;
     
-    
     for(i=0;i<loop_count;i++){
-      SensorNum = 1; Precision = 3;
-      val = SensorRead(fd, SensorNum, Precision);
-      printf("The value of Sensor %d is: %f\n",SensorNum, val);
-      
-      
-      SensorNum = 2; Precision = 2;
-      val = SensorRead(fd, SensorNum, Precision);
-      printf("The value of Sensor %d is: %f\n",SensorNum, val);
-      
-      
-      SensorNum = 3; Precision = 3;
-      val = SensorRead(fd, SensorNum, Precision);
-      printf("The value of Sensor %d is: %f\n",SensorNum, val);
-      
-      
-      SensorNum = 4; Precision = 1;
-      val = SensorRead(fd, SensorNum, Precision);
-      printf("The value of Sensor %d is: %f\n",SensorNum, val);
-      
-      
-      delay(fd, 1000); // waits for a second
+    
+        double PositionXOfBall1 = PtolemySensor("ball1", "PositionX");
+        printf("The value of PositionX Of Ball1 is: %f\n",PositionXOfBall1);
+        
+        double PositionYOfBall1 = PtolemySensor("ball1", "PositionY");
+        printf("The value of PositionY Of Ball1 is: %f\n",PositionYOfBall1);
+        
+        
+        PtolemyActuator("ball2", "PositionX", 123.789, "PositionY", 555.321);
+        
+        delay(1000); // waits for a second
+    
     }
     
-    SensorFinalization(fd);
+    
+    SensorFinalization();
  
     return 0;
 }
