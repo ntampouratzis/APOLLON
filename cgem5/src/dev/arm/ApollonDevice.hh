@@ -51,6 +51,7 @@
 
 #include <string>
 
+#include "HLA_Ptolemy.hh"
 
 #include "dev/arm/amba_device.hh"
 #include "mem/packet.hh"
@@ -68,9 +69,13 @@
 #define DMA_TRANSFER_ACTUATOR_TO_DEVICE   0x00000
 #define DMA_TRANSFER_SENSOR_TO_DEVICE     0x00008
 #define DMA_TRANSFER_SENSOR_FROM_DEVICE   0x00010
+#define GEM_CURRENT_TICK                  0x00018
 
 class ApollonDevice : public AmbaDmaDevice
 {
+    
+    HLA_Ptolemy * hla_ptolemy;
+    
   protected:
     int nodeNumber;
     
@@ -124,6 +129,8 @@ class ApollonDevice : public AmbaDmaDevice
      * @return a list of non-overlapping address ranges
      */
     AddrRangeList getAddrRanges() const;
+    
+    void closeHLA();
 
 };
 

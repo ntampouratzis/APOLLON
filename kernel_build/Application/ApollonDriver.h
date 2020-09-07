@@ -29,11 +29,8 @@ double PtolemySensor(char * instanceName, char * attributeName);
 void PtolemyActuator(char * instanceName, char * attributeName1, double attributeValue1, char * attributeName2, double attributeValue2);
 
 
-/* Pauses the program for the amount of time (in miliseconds) specified as parameter.                  *
- * (There are 1000 milliseconds in a second.)                                                          *
- * Input: the number of milliseconds to pause                                                          */
-void delay(uint64_t val);
-
+/* Returns the gem5 simulated time in ms                                                               */
+uint32_t Gem5SimulatedTime();
 
 #endif
 

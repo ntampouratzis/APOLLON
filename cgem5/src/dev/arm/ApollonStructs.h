@@ -20,6 +20,7 @@ typedef struct
     double value_double;
 } PtolemySensorData_t;
 
+
 typedef struct
 {
     char instanceName[64];

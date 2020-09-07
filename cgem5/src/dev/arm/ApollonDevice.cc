@@ -61,6 +61,16 @@ using namespace std;
 ApollonDevice::ApollonDevice(const Params *p)
     : AmbaDmaDevice(p), nodeNumber(p->nodeNum), synchEvent(this), DMARcvPktActuatorEvent(this), DMARcvPktSensorEvent(this), DMASendPktSensorEvent(this)
 {
+    
+    
+    // Federation and .fed names
+    string federation   = "Node" + to_string(nodeNumber);
+    string fedfile      = "Apollon.fed";
+    
+    
+    hla_ptolemy = new HLA_Ptolemy(nodeNumber);
+    hla_ptolemy->HLAInitialization(federation, fedfile, true, true);
+    
     //ACTUATOR
     PtolemyActuator = (PtolemyActuator_t*) malloc (sizeof(PtolemyActuator_t));
     MemSimToDevActuator = (uint8_t*) malloc (DEVICE_MEMORY_ENTRY_SIZE);
@@ -72,14 +82,33 @@ ApollonDevice::ApollonDevice(const Params *p)
     MemDevToSimSensor = (uint8_t*) malloc (DEVICE_MEMORY_ENTRY_SIZE);
     
     pioSize = p->pio_size;
-    //schedule(synchEvent, curTick());
+    if (!synchEvent.scheduled())
+        schedule(synchEvent, curTick());
+    
+    
+    // Register a callback to compensate for the destructor not
+    // being called. The callback forces to close the HLA Connection
+        Callback* cb = new MakeCallback<ApollonDevice,
+            &ApollonDevice::closeHLA>(this);
+        registerExitCallback(cb);
+}
+
+
+void
+ApollonDevice::closeHLA()
+{
+    
+    hla_ptolemy->resign_federation();
+
 }
 
 void
 ApollonDevice::Synch()
 {
-    printf("Synch with tick: %ld\n",curTick());
-    schedule(synchEvent, curTick() + 1000000000000);
+    hla_ptolemy->step();
+    
+    //printf("Synch with tick: %ld\n",curTick());
+    schedule(synchEvent, curTick() + 1000000000); //FIXME get the synchtime from console (every 1ms)
 }
 
 
@@ -89,6 +118,14 @@ ApollonDevice::read(PacketPtr pkt)
     pkt->makeAtomicResponse();
     assert(pkt->getAddr() >= pioAddr && pkt->getAddr() < pioAddr + pioSize); 
     
+    switch (pkt->getAddr() - pioAddr) {
+        case GEM_CURRENT_TICK:
+	  pkt->set((uint32_t)(curTick()/1000000000));
+	  break;
+        default:
+          panic("Device: Unrecognized Device Option!\n");
+    }
+    
     return pioDelay;
 }
 
@@ -96,32 +133,49 @@ ApollonDevice::read(PacketPtr pkt)
 void
 ApollonDevice::DMARcvPktActuatorComplete()
 {
-  printf("\n----- DMA Read Actuator Completed!!! (curTick(): %ld) -----\n", curTick());
+  //printf("\n----- DMA Read Actuator Completed!!! (curTick(): %ld) -----\n", curTick());
   memcpy(PtolemyActuator, MemSimToDevActuator, sizeof(PtolemyActuator_t));
   
-  printf("PtolemyActuator.instanceName %s\n", (*PtolemyActuator).instanceName);
+  std::list<ActuatorAttributes_t> attr_insert;
+  
+  //printf("PtolemyActuator.instanceName %s\n", (*PtolemyActuator).instanceName);
   for(int i=0; i<(*PtolemyActuator).NoOfActiveAttributes; i++){
-      printf("PtolemyActuator.attributeName %s: %f\n", (*PtolemyActuator).attributeName[i], (*PtolemyActuator).value_double[i]);
-  }    
+      ActuatorAttributes_t actuator_attr;
+      actuator_attr.attributeName = (*PtolemyActuator).attributeName[i];
+      actuator_attr.value_double  = (*PtolemyActuator).value_double[i];
+      attr_insert.push_back(actuator_attr);
+      
+      //printf("PtolemyActuator.attributeName %s: %f\n", (*PtolemyActuator).attributeName[i], (*PtolemyActuator).value_double[i]);
+  }
+  hla_ptolemy->sendUpdate((*PtolemyActuator).instanceName, attr_insert);
 }
 
 
 void
 ApollonDevice::DMARcvPktSensorComplete()
 {
-  printf("\n----- DMA Read SENSOR Completed!!! (curTick(): %ld) -----\n", curTick());
+  //printf("\n----- DMA Read SENSOR Completed!!! (curTick(): %ld) -----\n", curTick());
   memcpy(PtolemySensorAttr, MemSimToDevSensor, sizeof(PtolemySensorAttr_t));
   
-  printf( "PtolemySensor.instanceName %s\n", (*PtolemySensorAttr).instanceName);
-  printf( "PtolemySensor.attributeName %s\n", (*PtolemySensorAttr).attributeName);
+  //printf( "PtolemySensor.instanceName %s\n", (*PtolemySensorAttr).instanceName);
+  //printf( "PtolemySensor.attributeName %s\n", (*PtolemySensorAttr).attributeName);
   
-  //FIXME SEARCH for values from HLA-Ptolemy
-  if(strcmp ((*PtolemySensorAttr).attributeName,"PositionX") == 0 )
-    (*PtolemySensorData).value_double = 987654.321;
-  else
-    (*PtolemySensorData).value_double = 887654.321;  
   
-
+  std::list<SensorAttributes_t> sensor_attributes = hla_ptolemy->GetSensorAttributes();
+  
+  std::list <SensorAttributes_t>::iterator iObject;
+  for (iObject= sensor_attributes.begin(); iObject != sensor_attributes.end(); ++iObject){
+      SensorAttributes_t attr   = *iObject;
+      std::string instanceName  = attr.instanceName;
+      std::string attributeName = attr.attributeName;
+      double val                = attr.value_double;
+      if ((strcmp ((*PtolemySensorAttr).instanceName,instanceName.c_str()) == 0 ) && (strcmp ((*PtolemySensorAttr).attributeName,attributeName.c_str()) == 0 )){ //Compare the instanceName & attributeName
+          (*PtolemySensorData).value_double = val;
+          break;
+      }
+      //cout << "RECEIVE Attribute: " << attributeName <<" from instance: "<< instanceName << " from Ptolemy: " << val << endl;
+    }
+  
   
   memcpy(MemDevToSimSensor, PtolemySensorData, sizeof(PtolemySensorData_t));
   dmaWrite((Addr) bus_addr_sensor_from_device, sizeof(PtolemySensorData_t), &DMASendPktSensorEvent, MemDevToSimSensor , DELAY_PER_DMA_MEMORY_ENTRY);
@@ -131,7 +185,7 @@ ApollonDevice::DMARcvPktSensorComplete()
 void
 ApollonDevice::DMASendPktSensorComplete()
 {
-  printf("\n----- DMA Write Completed!!! (curTick(): %ld) -----\n", curTick());    
+  //printf("\n----- DMA Write Completed!!! (curTick(): %ld) -----\n", curTick());    
   gic->sendInt(intNum); //# Send Interrupt if the DMA Write Completed #
 }
 

@@ -19,9 +19,7 @@
 #include <time.h> 
 
 #include <iostream>
-#include <string>
 #include <cstdlib>
-#include <string>
 #include <deque>
 
 //! Server Functions !//
@@ -48,11 +46,13 @@
 #define MAX_CONNECTIONS 10
 #define TCP_PORT 60401
 #define CPT_TCP_PORT 60402
+#define APOLLON_TCP_PORT 60403
 
-pthread_t tid[2*MAX_CONNECTIONS];
+pthread_t tid[3*MAX_CONNECTIONS];
 
 pthread_mutex_t lock1;
 pthread_mutex_t lock2;
+pthread_mutex_t lock3;
 
 typedef struct HLAInitializationRequests{
  int type;
@@ -390,6 +390,111 @@ void* CPTHandleFunction(void *arg){
 }
 
 
+void* ApollonHandleFunction(void *arg){
+  int *listenfdPtr = (int*)arg;
+  int listenfd = *listenfdPtr;
+  
+  int n;
+  bool ret = false;
+  while(1)
+    {
+            
+        int connfd = accept(listenfd, (struct sockaddr*)NULL, NULL); 
+	
+	HLAInitializationRequest rqst;
+        char rqst_char[128] = {0};
+        char resp_char[128] = {0};
+	ServerElement elem;
+	n = read(connfd, (void *) &rqst_char, sizeof(rqst_char));
+	if(n < 0)
+	  printf("\n Request error \n");
+	
+        /* Split the request string into struct format */
+        std::string rqst_str(rqst_char);
+        std::string delimiter = "|";
+        
+        size_t pos = rqst_str.find(delimiter);
+        std::string rqst_type = rqst_str.substr(0, pos);
+        rqst_str.erase(0, pos + delimiter.length());
+        
+        pos = rqst_str.find(delimiter);
+        std::string rqst_name = rqst_str.substr(0, pos);
+        rqst_str.erase(0, pos + delimiter.length());
+        std::string rqst_node = rqst_str;
+        
+        strcpy(rqst.name, rqst_name.c_str());
+        rqst.node = std::stoi(rqst_node);
+        /* END Split the request string into struct format */
+	
+        if(rqst_type == "CREATE"){
+	  printf("Server Request: type: CREATE | name: %s | node: %d\n", rqst.name, rqst.node);
+	  strcpy(elem.name, rqst.name);
+	  elem.array = (bool *) malloc(sizeof(rqst.node));	  
+	  for(int i=0;i<rqst.node;i++){
+	    elem.array[i] = false;
+	  }
+	  pthread_mutex_lock(&lock3);
+	  aDeque.push_back(elem);
+	  pthread_mutex_unlock(&lock3);
+	  ret = true;
+        }
+	else if(rqst_type == "REMOVE"){
+	  printf("Server Request: type: REMOVE | name: %s | node: %d\n", rqst.name, rqst.node);
+	  pthread_mutex_lock(&lock3);
+	  for(int i=0;i<aDeque.size();i++){
+	    elem = aDeque[i];
+	    if(strcmp(elem.name,rqst.name)==0){
+	      aDeque.erase (aDeque.begin()+i);
+	      break;
+	    }
+	  }
+	  pthread_mutex_unlock(&lock3);
+	  ret = true;
+        }
+	else if(rqst_type == "WRITE"){
+	  printf("Server Request: type: WRITE | name: %s | node: %d\n", rqst.name, rqst.node);
+	  pthread_mutex_lock(&lock3);
+	  for(int i=0;i<aDeque.size();i++){
+	    elem = aDeque[i];
+	    if(strcmp(elem.name,rqst.name)==0)
+	      break;
+	  }
+	  elem.array[rqst.node] = true;
+	  pthread_mutex_unlock(&lock3);
+	  ret = true;
+        }
+	else if(rqst_type == "READ"){
+	  printf("Server Request: type: READ | name: %s | node: %d\n", rqst.name, rqst.node);
+	  pthread_mutex_lock(&lock3);
+	  for(int i=0;i<aDeque.size();i++){
+	    elem = aDeque[i];
+	    if(strcmp(elem.name,rqst.name)==0)
+	      break;
+	  }
+	  ret = elem.array[rqst.node];
+	  pthread_mutex_unlock(&lock3);
+        }
+        else if(rqst_type == "CLOSE_SERVER"){
+	  printf("Server Request: type: CLOSE_SERVER \n");
+	  ExitVar = true;
+        }
+        else{
+	  printf("\n Unknown Request Type \n");
+	}
+	
+	if(ret)
+            write(connfd, "true" , sizeof("true")); 
+        else
+            write(connfd, "false" , sizeof("false")); 
+        	
+        close(connfd);
+	
+     }
+  
+  return 0;
+}
+
+
 int main(int argc, char *argv[])
 {
     ExitVar = false;
@@ -449,6 +554,34 @@ int main(int argc, char *argv[])
     }
     /* END CPT Server Implementation */
     
+    
+    /* Apollon Server Implementation */
+    int listenfd3 = 0;
+    struct sockaddr_in serv_addr3; 
+
+    listenfd3 = socket(AF_INET, SOCK_STREAM, 0);
+    memset(&serv_addr3, '0', sizeof(serv_addr3));
+
+    serv_addr3.sin_family = AF_INET;
+    serv_addr3.sin_addr.s_addr = htonl(INADDR_ANY);
+    serv_addr3.sin_port = htons(APOLLON_TCP_PORT); 
+
+    bind(listenfd3, (struct sockaddr*)&serv_addr3, sizeof(serv_addr3)); 
+
+    listen(listenfd3, MAX_CONNECTIONS); 
+    
+    if (pthread_mutex_init(&lock3, NULL) != 0){
+        printf("\n mutex3 init failed\n");
+        return 1;
+    }
+        
+    for(int i=2*MAX_CONNECTIONS;i<3*MAX_CONNECTIONS;i++){
+      int err = pthread_create(&(tid[i]), NULL, &ApollonHandleFunction, &listenfd3);
+      if (err != 0)
+	printf("\nApollon can't create thread :[%s]", strerror(err)); 
+    }
+    /* END Apollon Server Implementation */
+    
 
     while(1){
       if(ExitVar) {break;}
@@ -457,6 +590,7 @@ int main(int argc, char *argv[])
     
     pthread_mutex_destroy(&lock1);
     pthread_mutex_destroy(&lock2);
+    pthread_mutex_destroy(&lock3);
     
     
 }

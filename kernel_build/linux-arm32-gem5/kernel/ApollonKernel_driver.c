@@ -38,6 +38,7 @@
 #define DMA_TRANSFER_ACTUATOR_TO_DEVICE   0x00000
 #define DMA_TRANSFER_SENSOR_TO_DEVICE     0x00008
 #define DMA_TRANSFER_SENSOR_FROM_DEVICE   0x00010
+#define GEM_CURRENT_TICK                  0x00018
 
  
 static dev_t dev;
@@ -143,21 +144,11 @@ static int my_ioctl(struct inode *i, struct file *f, unsigned int cmd, unsigned 
 static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 #endif
 {
-    u64 delay_val;
+    u32 Gem5currentTick; // This variable declares the gem5 simulated time in ms
     
     switch (cmd)
     {
-	    
-        case QUERY_DELAY_REQUEST:
-	    if (copy_from_user((u64 *)&delay_val, (u64 *)arg, sizeof(u64))){
-                return -EACCES;
-            }
-            
-	    msleep(delay_val);
-	    
-            break;
-	    
-            
+	       
         case QUERY_BUS_ADDR_SENSOR:
 	    iowrite32(cpu_to_le32(bus_addr_sensor_from_device), ioremap_res + DMA_TRANSFER_SENSOR_FROM_DEVICE);
             break;    
@@ -195,6 +186,15 @@ static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
             
             iowrite32(cpu_to_le32(bus_addr_actuator_to_device), ioremap_res + DMA_TRANSFER_ACTUATOR_TO_DEVICE);
             
+            break;   
+            
+        case QUERY_GEM5_CURR_TICK:     
+            
+            Gem5currentTick = ioread32(ioremap_res + GEM_CURRENT_TICK);
+            
+            if (copy_to_user((u32 *)arg, (u32 *)&Gem5currentTick, sizeof(u32))){
+                return -EACCES;
+	    }
             break;      
 	    
         default:

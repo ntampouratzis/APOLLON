@@ -104,6 +104,16 @@ double PtolemySensor(char * instanceName, char * attributeName){
     return PtolemySensorData.value_double;
 }
 
+uint32_t Gem5SimulatedTime(){
+    uint32_t Gem5currentTick; // This variable declares the gem5 simulated time in ms
+        
+    if (ioctl(fd, QUERY_GEM5_CURR_TICK, (uint32_t *) &Gem5currentTick) == -1){
+        perror("\n\n IOCTL ERROR: QUERY_GEM5_STATISTICS\n\n");
+    }
+    
+    return Gem5currentTick;
+}
+
 
 void dma_from_device_wait()
 {
@@ -115,15 +125,6 @@ void dma_from_device_wait()
     if(ret == 1){
       dma_from_device_wait();
     }
-}
-
-
-
-
-void delay(uint64_t val){
-  if (ioctl(fd, QUERY_DELAY_REQUEST, (uint64_t *) &val) == -1){
-        perror("query_apps ioctl delay_request");
-  }
 }
 
 
