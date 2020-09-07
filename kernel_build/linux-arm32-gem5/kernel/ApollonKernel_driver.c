@@ -124,7 +124,6 @@ void ramdevice_cleanup(void)
       kfree(PtolemySensorAttr);
       kfree(PtolemySensorData);
       kfree(PtolemyActuator);
-    
 }
 
 

@@ -285,6 +285,9 @@ class ApollonDevice(AmbaDmaDevice):
     cxx_header = "dev/arm/ApollonDevice.hh"
     pio_size = Param.Addr(0xFFF, "Size of address range")
     nodeNum = Param.Int("Node Number")
+    ptolemy_synch_time = Param.String("Ptolemy Synchronization Time")
+    sys_clk = Param.String("System Clock")
+    ticksPerNanoSecond =  Param.ConvertFromNanoSecToTicks('ticksPerNanoSecond', "ticksPerNanoSecond")
     #int_delay = '1us'
     amba_id = 0x00141051        
 
@@ -741,8 +744,8 @@ class VExpress_EMM(RealView):
                                  InterruptLine=2, InterruptPin=2)
         
     # Attach the ApollonDevice
-    def attachApollonDevice(self, _nodeNumber):
-        self.apollondev = ApollonDevice(pio_addr=0x1c061000, int_num=54, nodeNum=_nodeNumber) #ApollonDevice        
+    def attachApollonDevice(self, _nodeNumber, _ptolemy_synch_time, _system_clock):
+        self.apollondev = ApollonDevice(pio_addr=0x1c061000, int_num=54, nodeNum=_nodeNumber, ptolemy_synch_time=_ptolemy_synch_time, sys_clk=_system_clock) #ApollonDevice        
 
     def enableMSIX(self):
         self.gic = Pl390(dist_addr=0x2C001000, cpu_addr=0x2C002000, it_lines=512)
@@ -938,8 +941,8 @@ Interrupts:
         ]
     
     # Attach the ApollonDevice
-    def attachApollonDevice(self, _nodeNumber):
-        self.apollondev = ApollonDevice(pio_addr=0x1c061000, int_num=54, nodeNum=_nodeNumber) #ApollonDevice (APOLLON) 
+    def attachApollonDevice(self, _nodeNumber, _ptolemy_synch_time, _system_clock):
+        self.apollondev = ApollonDevice(pio_addr=0x1c061000, int_num=54, nodeNum=_nodeNumber, ptolemy_synch_time=_ptolemy_synch_time, sys_clk=_system_clock) #ApollonDevice (APOLLON) 
     
     def attachPciDevices(self):
         self.ethernet = IGbE_e1000(pci_bus=0, pci_dev=0, pci_func=0, #APOLLON

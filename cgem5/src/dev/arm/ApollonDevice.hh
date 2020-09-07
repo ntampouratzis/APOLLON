@@ -91,6 +91,8 @@ class ApollonDevice : public AmbaDmaDevice
     uint32_t bus_addr_sensor_to_device;
     uint32_t bus_addr_sensor_from_device;
     
+    double PtolemySynchTimeTicks; 	//! PtolemySynchTimeTicks are the ticks in which the gem5 node will be synchronized with the Ptolemy counterpart node!//
+    
       
   public:
       
@@ -129,6 +131,8 @@ class ApollonDevice : public AmbaDmaDevice
      * @return a list of non-overlapping address ranges
      */
     AddrRangeList getAddrRanges() const;
+    
+    void TimeConversion(const Params *p);
     
     void closeHLA();
 

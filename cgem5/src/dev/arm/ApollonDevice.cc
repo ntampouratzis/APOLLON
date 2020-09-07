@@ -61,7 +61,7 @@ using namespace std;
 ApollonDevice::ApollonDevice(const Params *p)
     : AmbaDmaDevice(p), nodeNumber(p->nodeNum), synchEvent(this), DMARcvPktActuatorEvent(this), DMARcvPktSensorEvent(this), DMASendPktSensorEvent(this)
 {
-    
+    TimeConversion(p);
     
     // Federation and .fed names
     string federation   = "Node" + to_string(nodeNumber);
@@ -108,7 +108,7 @@ ApollonDevice::Synch()
     hla_ptolemy->step();
     
     //printf("Synch with tick: %ld\n",curTick());
-    schedule(synchEvent, curTick() + 1000000000); //FIXME get the synchtime from console (every 1ms)
+    schedule(synchEvent, curTick() + PtolemySynchTimeTicks);
 }
 
 
@@ -233,4 +233,42 @@ ApollonDevice *
 ApollonDeviceParams::create()
 {
     return new ApollonDevice(this);
+}
+
+
+void 
+ApollonDevice::TimeConversion(const Params *p){
+    
+  
+    //! Convert SystemClockTicks to Double //!  
+    double SystemClockTicks = 0.0;
+    const char * sys_clock_str = p->sys_clk.c_str();
+    int len = strlen(sys_clock_str);
+    const char *last_three = &sys_clock_str[len-3];
+    char * first_characters = strndup (sys_clock_str, len-3);
+    if(strcmp("GHz",last_three) == 0){
+      SystemClockTicks = (double) atoi(first_characters)* (double)1000000000 * (double)p->ticksPerNanoSecond;
+    }
+    else if(strcmp("MHz",last_three) == 0){
+      SystemClockTicks = (double) atoi(first_characters)* (double)1000000 * (double)p->ticksPerNanoSecond;
+    }
+    
+    //! Convert SynchTime to Double //!
+    double PtolemySynchTime = 0.0;
+    const char * PtolemySynchTime_str   = p->ptolemy_synch_time.c_str();
+    len = strlen(PtolemySynchTime_str);
+    const char *last_three2 = &PtolemySynchTime_str[len-2];
+    char * first_characters2 = strndup (PtolemySynchTime_str, len-2);
+    if(strcmp("ms",last_three2) == 0){
+      PtolemySynchTime = (double) atoi(first_characters2) / (double)1000;
+    }
+    else if(strcmp("us",last_three2) == 0){
+      PtolemySynchTime = (double) atoi(first_characters2) / (double)1000000;
+    }
+    else{
+      printf("ERROR! Time units cannot be recognized. Please select <ms> or <us> in --PtolemySynchTime (i.e. --PtolemySynchTime=1ms).\n");
+    }
+    
+    //! SynchTimeTicks are the ticks in which the simulator node will be synchronized !//
+    PtolemySynchTimeTicks = PtolemySynchTime * SystemClockTicks; 
 }

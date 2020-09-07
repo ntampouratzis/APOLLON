@@ -107,7 +107,8 @@ def build_test_system(np):
                                  external_memory=options.external_memory_system,
                                  ruby=options.ruby,
                                  security=options.enable_security_extensions, 
-                                 cossim_enabled=options.cossim, nodeNum=options.nodeNum)
+                                 cossim_enabled=options.cossim, nodeNum=options.nodeNum, 
+                                 system_clock=options.sys_clock, ptolemy_synch_time=options.PtolemySynchTime)
         if options.enable_context_switch_stats_dump:
             test_sys.enable_context_switch_stats_dump = True
     else:

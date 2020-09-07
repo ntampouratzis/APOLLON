@@ -381,6 +381,10 @@ def addFSOptions(parser):
     parser.add_option("--mcpat-xml", action="store", type="string", default="empty", dest="McPATXml",
                       help="Specify the McPAT xml ProcessorDescriptionFile")
     
+    #APOLLON Options
+    parser.add_option("--PtolemySynchTime", action="store", type="string", dest="PtolemySynchTime",
+                      help="Specify the Synchronization Time. For example: --PtolemySynchTime=1ms")
+    
     # Disk Image Options
     parser.add_option("--disk-image", action="store", type="string", default=None,
                       help="Path to the disk image to use.")
