@@ -375,7 +375,7 @@ def addFSOptions(parser):
     parser.add_option("--RxPacketTime", action="store", type="string", dest="RxPacketTime",
                       help="Specify the minimum time in which the node can accept packet from the OMNET++. For example: --SynchTime=1ms")
     
-    parser.add_option("--TotalNodes", action="store", type="int", dest="TotalNodes",
+    parser.add_option("--TotalNodes", action="store", type="int", dest="TotalNodes", default=1,
                       help="Specify the total number of nodes")
     
     parser.add_option("--mcpat-xml", action="store", type="string", default="empty", dest="McPATXml",

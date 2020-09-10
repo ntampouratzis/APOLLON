@@ -89,7 +89,7 @@ class HLA_Ptolemy : public NullFederateAmbassador
 {
 public:
 
-    HLA_Ptolemy(int node);
+    HLA_Ptolemy(int node, int _TotalNodes);
     virtual ~HLA_Ptolemy() throw (RTI::FederateInternalError);
 
     void init(int);
@@ -223,6 +223,7 @@ protected:
     std::list<SensorAttributes_t> sensor_attributes; //List with Sensor attributes which are sent from Ptolemy
     
     int Node;
+    int TotalNodes;
     
     RTI::FederateHandle handle ;
     bool creator ;

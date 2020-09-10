@@ -46,9 +46,10 @@ static PrettyDebug D("HLA_Ptolemy", __FILE__);
 // ----------------------------------------------------------------------------
 /** Constructor
  */
-HLA_Ptolemy::HLA_Ptolemy(int node)
+HLA_Ptolemy::HLA_Ptolemy(int node, int _TotalNodes)
     : rtiamb()
     , Node(node)
+    , TotalNodes(_TotalNodes)
     , handle(0)
     , creator(false)
     , nbTicks(0)
@@ -85,12 +86,13 @@ HLA_Ptolemy::HLAInitialization(std::string federation, std::string fedfile, bool
         
         HLAInitializationRequest tmp;
         
-        //FIXME It must be called only once
-        if (true){ // if(node==0)
+        /* The gem5 is the only node, so, it creates the Initialization Server Signals            *
+         * In the other cases (TotalNodes > 1), OMNET++ creates the Initialization Server Signals */
+        if (TotalNodes==1){
             //! --- CERTI INITIALIZATION IP --- !//
             /****** Create Signal Files (HLA initialization) *****/
             tmp.type = CREATE;
-            tmp.node = 4;
+            tmp.node = TotalNodes;
             
             strcpy(tmp.name, "PtolemyToGem5Signal");
             RequestFunction(tmp);
@@ -122,28 +124,31 @@ HLA_Ptolemy::HLAInitialization(std::string federation, std::string fedfile, bool
         /* Write "1" in Node+1 line of Gem5ToPtolemySignal Array */
         tmp.type = WRITE;
         strcpy(tmp.name, "Gem5ToPtolemySignal");
-        tmp.node = 0;
+        tmp.node = Node;
         RequestFunction(tmp);
         
         //! Wait until Ptolemy federation will be joined !//
         while(1){
             tmp.type = READ;
             strcpy(tmp.name, "PtolemyToGem5Signal");
-            tmp.node = 0;
+            tmp.node = Node;
             bool ret = RequestFunction(tmp);
             if(ret){ break;}
         }
         
         this->synchronize();
         
-        //FIXME It must be called only once
-        tmp.type = REMOVE;
-      
-        strcpy(tmp.name, "PtolemyToGem5Signal");
-        RequestFunction(tmp);
+        /* The gem5 is the only node, so, it removes the Initialization Server Signals            *
+         * In the other cases (TotalNodes > 1), OMNET++ removes the Initialization Server Signals */
+        if (TotalNodes==1){ 
+            tmp.type = REMOVE;
         
-        strcpy(tmp.name, "Gem5ToPtolemySignal");
-        RequestFunction(tmp);
+            strcpy(tmp.name, "PtolemyToGem5Signal");
+            RequestFunction(tmp);
+            
+            strcpy(tmp.name, "Gem5ToPtolemySignal");
+            RequestFunction(tmp);
+        }
     
 }
 

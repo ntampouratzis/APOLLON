@@ -209,7 +209,7 @@ def makeSparcSystem(mem_mode, mdesc=None, cmdline=None):
 
 def makeArmSystem(mem_mode, machine_type, num_cpus=1, mdesc=None,
                   dtb_filename=None, bare_metal=False, cmdline=None,
-                  external_memory="", ruby=False, security=False, cossim_enabled=False, nodeNum=0,
+                  external_memory="", ruby=False, security=False, cossim_enabled=False, nodeNum=0, TotalNodes=1,
                   system_clock=None, ptolemy_synch_time=None):
     assert machine_type
 
@@ -273,7 +273,7 @@ def makeArmSystem(mem_mode, machine_type, num_cpus=1, mdesc=None,
 
     #APOLLON: # Attach APOLLON Device
     if ptolemy_synch_time != None:
-        self.realview.attachApollonDevice(nodeNum, ptolemy_synch_time, system_clock)	
+        self.realview.attachApollonDevice(nodeNum, TotalNodes, ptolemy_synch_time, system_clock)	
 
     self.cf0 = CowIdeDisk(driveID='master')
     self.cf0.childImage(mdesc.disk())

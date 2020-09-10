@@ -59,7 +59,7 @@ using namespace std;
 
 
 ApollonDevice::ApollonDevice(const Params *p)
-    : AmbaDmaDevice(p), nodeNumber(p->nodeNum), synchEvent(this), DMARcvPktActuatorEvent(this), DMARcvPktSensorEvent(this), DMASendPktSensorEvent(this)
+    : AmbaDmaDevice(p), nodeNumber(p->nodeNum), TotalNodes(p->TotalNodes), synchEvent(this), DMARcvPktActuatorEvent(this), DMARcvPktSensorEvent(this), DMASendPktSensorEvent(this)
 {
     TimeConversion(p);
     
@@ -68,7 +68,7 @@ ApollonDevice::ApollonDevice(const Params *p)
     string fedfile      = "Apollon.fed";
     
     
-    hla_ptolemy = new HLA_Ptolemy(nodeNumber);
+    hla_ptolemy = new HLA_Ptolemy(nodeNumber, TotalNodes);
     hla_ptolemy->HLAInitialization(federation, fedfile, true, true);
     
     //ACTUATOR

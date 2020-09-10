@@ -78,6 +78,7 @@ class ApollonDevice : public AmbaDmaDevice
     
   protected:
     int nodeNumber;
+    int TotalNodes;
     
     uint8_t * MemSimToDevActuator;
     uint8_t * MemSimToDevSensor;
