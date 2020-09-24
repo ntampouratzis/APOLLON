@@ -651,10 +651,13 @@ public class HlaManager1_3 implements HlaManagerDelegate {
             while(true){
                 String pPath = System.getenv("CERTI_HOST");
                 Socket socket = new Socket(pPath, 60403);
+                
+                String FederationName = hlaManager.get_FederationName();
+                String NodeNum        = FederationName.substring(4);
             
                 OutputStream output = socket.getOutputStream();
                 PrintWriter writer = new PrintWriter(output, true);
-                writer.println("READ|Gem5ToPtolemySignal|0");
+                writer.println("READ|Gem5ToPtolemySignal|"+NodeNum);
             
                 InputStream input = socket.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
@@ -2121,9 +2124,12 @@ public class HlaManager1_3 implements HlaManagerDelegate {
             String pPath = System.getenv("CERTI_HOST");
             Socket socket = new Socket(pPath, 60403);
             
+            String FederationName = hlaManager.get_FederationName();
+            String NodeNum        = FederationName.substring(4);
+            
             OutputStream output = socket.getOutputStream();
             PrintWriter writer = new PrintWriter(output, true);
-            writer.println("WRITE|PtolemyToGem5Signal|0");
+            writer.println("WRITE|PtolemyToGem5Signal|"+NodeNum);
         
         } catch (UnknownHostException ex) {
             System.out.println("Server not found: " + ex.getMessage());
