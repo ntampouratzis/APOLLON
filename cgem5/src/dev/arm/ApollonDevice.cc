@@ -98,8 +98,17 @@ void
 ApollonDevice::closeHLA()
 {
     
+    std::list<ActuatorAttributes_t> attr_insert;
+    
+    ActuatorAttributes_t actuator_attr;
+    actuator_attr.attributeName = "PtolemyStopExecutionAttr";
+    actuator_attr.value_double  = 0;
+    attr_insert.push_back(actuator_attr);
+    hla_ptolemy->sendUpdate("PtolemyStopExecution", attr_insert);
+    
+    hla_ptolemy->step();
+    
     hla_ptolemy->resign_federation();
-
 }
 
 void
