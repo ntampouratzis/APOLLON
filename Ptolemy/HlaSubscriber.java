@@ -381,7 +381,12 @@ public class HlaSubscriber extends TypedAtomicActor implements HlaReflectable {
                             + "\" has been sent at \"" + te.timeStamp + "\" ("
                             + content.toString() + ")");
                 }
-
+                                
+                if(getHlaAttributeName().equals("PtolemyStopExecutionAttr")){ //APOLLON
+                    System.out.println("\n\n APOLLON: Execution Terminated from counterpart aGEM5 node \n\n");
+                    getDirector().finish();
+                    getDirector().stopFire();
+                }
             }
 
             it.remove();
