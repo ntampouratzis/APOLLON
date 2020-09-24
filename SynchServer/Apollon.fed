@@ -23,6 +23,7 @@
 		(Attribute PositionX RELIABLE TIMESTAMP)
 		(Attribute PositionY RELIABLE TIMESTAMP)
 		(Attribute PositionZ2 RELIABLE TIMESTAMP)
+		(Attribute PtolemyStopExecutionAttr RELIABLE TIMESTAMP) ;; DO NOT DELETE THIS ROW
 	)
     )
   )
