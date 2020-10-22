@@ -54,7 +54,7 @@ HLA_OMNET::HLA_OMNET(std::string federate_name, int node, int _TotalNodes)
 
     if (federate_name.compare("SYNCH_OMNET") == 0){
       //! --- CERTI INITIALIZATION IP --- !//
-      /****** Create Signal Files (HLA initialization) *****/
+      /****** Create COSSIM Signal Files (HLA initialization) *****/
       HLAInitializationRequest tmp;
       tmp.type = CREATE;
       tmp.node = TotalNodes;
@@ -67,7 +67,28 @@ HLA_OMNET::HLA_OMNET(std::string federate_name, int node, int _TotalNodes)
       tmp.node = TotalNodes+1;
       strcpy(tmp.name, "GlobalSynchSignal");
       RequestFunction(tmp);
-      /****** END Create Signal Files (HLA initialization) *****/
+      /****** END Create COSSIM Signal Files (HLA initialization) *****/
+
+      /****** Create APOLLON Signal Files (HLA initialization) *****/
+      /* REMOVE ANY OLD CONFIGURATION */
+      tmp.type = REMOVE;
+      strcpy(tmp.name, "PtolemyToGem5Signal");
+      RequestFunction(tmp);
+
+      strcpy(tmp.name, "Gem5ToPtolemySignal");
+      RequestFunction(tmp);
+      /* END REMOVE ANY OLD CONFIGURATION */
+
+
+
+      tmp.type = CREATE;
+      tmp.node = TotalNodes;
+      strcpy(tmp.name, "PtolemyToGem5Signal");
+      RequestFunction(tmp);
+
+      strcpy(tmp.name, "Gem5ToPtolemySignal");
+      RequestFunction(tmp);
+      /****** END Create APOLLON Signal Files (HLA initialization) *****/
       //! --- END CERTI INITIALIZATION IP --- !//
     }
 
