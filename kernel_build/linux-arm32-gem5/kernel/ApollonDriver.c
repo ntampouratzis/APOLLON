@@ -5,8 +5,6 @@
 #include <sys/stat.h>
 
 
-
-
 void CreateDevice(char * dev);
 int doesDeviceExist(const char *filename);
 void dma_from_device_wait();
@@ -63,23 +61,24 @@ void CreateDevice(char * dev){
 
 
 
-void PtolemyActuator(char * instanceName, char * attributeName1, double attributeValue1, char * attributeName2, double attributeValue2){
+void PtolemyActuator(char * instanceName, char * attributeName[], double attributeValue[], int NoOfAttributes){
+    if(NoOfAttributes > MAX_ACTUATOR_ATTRIBUTES){
+        perror("\n\n PtolemyActuator ERROR: NoOfAttributes > MAX_ACTUATOR_ATTRIBUTES\n\n");
+    }
+    
     PtolemyActuator_t PtolemyAct;
     
-    PtolemyAct.NoOfActiveAttributes = 2; //Set the number of active attributes
+    PtolemyAct.NoOfActiveAttributes = NoOfAttributes; //Set the number of active attributes
     // Copy the Data to PtolemyAct struct
     strcpy(PtolemyAct.instanceName, instanceName);
-    strcpy(PtolemyAct.attributeName[0], attributeName1);
-    strcpy(PtolemyAct.attributeName[1], attributeName2);
-    PtolemyAct.value_double[0] = attributeValue1;
-    PtolemyAct.value_double[1] = attributeValue2;
-    
+    for(int i=0; i<NoOfAttributes;i++){
+        strcpy(PtolemyAct.attributeName[i], attributeName[i]);
+        PtolemyAct.value_double[i] = attributeValue[i];
+    }
     
     if (ioctl(fd, QUERY_ACTUATOR_WRITE_DATA, &PtolemyAct) == -1){
         perror("\n\n IOCTL ERROR: QUERY_ACTUATOR_WRITE_DATA\n\n");
     }
-    
-    
 }
 
 
