@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     
     SensorInitialization();
     
-    uint64_t loop_count = 500; // 5sec example
+    uint64_t loop_count = 300; // 3sec example
     uint64_t i;
     
     struct timeval start, end;
@@ -54,8 +54,16 @@ int main(int argc, char *argv[])
                 toogle_y = 0;
         }
         
+        char * attributeName[2];
+        double attributeValue[2];
         
-        PtolemyActuator("ball2", "PositionX", local_x, "PositionY", local_y);
+        attributeName[0] = "PositionX";
+        attributeName[1] = "PositionY";
+        
+        attributeValue[0] = local_x;
+        attributeValue[1] = local_y;
+        
+        PtolemyActuator("ball2", attributeName, attributeValue, 2);
         
         gettimeofday(&end, NULL);
 
