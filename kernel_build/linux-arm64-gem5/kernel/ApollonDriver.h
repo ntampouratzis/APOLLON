@@ -22,11 +22,12 @@ void SensorFinalization();
 double PtolemySensor(char * instanceName, char * attributeName);
 
 
-/* Write the Ptolemy actuator Values                                                                   *
+/* Write Ptolemy actuator Values                                                                   *
  * (i)   Input: The Instance Name of Sensor (the same name with the Ptolemy environment)               *
- * (ii)  Input: The Attribute Name (the same name with the Ptolemy environment)                        *
- * (iii) Input: The Value of each attribute Name                                                       */
-void PtolemyActuator(char * instanceName, char * attributeName1, double attributeValue1, char * attributeName2, double attributeValue2);
+ * (ii)  Input: A list of Attribute Names (the same name with the Ptolemy environment)                 *
+ * (iii) Input: Values of each attribute Name                                                          *
+ * (iv)  Input: Number of attributes                                                                   */
+void PtolemyActuator(char * instanceName, char * attributeName[], double attributeValue[], int NoOfAttributes);
 
 
 /* Returns the gem5 simulated time in ms                                                               */
